@@ -21,19 +21,34 @@ const displayWinMesssage = () => {
     panel.innerHTML = `Gratulacje ${activePlayer}, Wygrałeś!`
     panel.classList.add('active')
 }
+const displayTieMessage = () => {
+    panel.innerHTML = `Remis! zagrajcie jeszcze raz`
+    panel.classList.add('active')
+}
 const validateGame = () => {
+    let gameWon = false;
     for (let i = 0; i < 8; i++) {
         const [posA, posB, posC] = winningConditions[i]
         const value1 = fields[posA];
         const value2 = fields[posB];
         const value3 = fields[posC];
         if (value1 !== '' && value1 === value2 && value2 === value3) {
-            gameActive = false
-            displayWinMesssage()
+            gameWon = true
+            break;
         }
+    }
+    if (gameWon) {
+        gameActive = false;
+        displayWinMesssage()
+    } else if (isBoardFull()) {
+        gameActive = false
+        displayTieMessage()
     }
 }
 
+const isBoardFull = () => {
+    return fields.find(field => field === '') === undefined
+}
 
 fieldsElement.forEach(field => {
     field.addEventListener('click', (e) => {
@@ -41,9 +56,9 @@ fieldsElement.forEach(field => {
         if (gameActive && fields[pos] === '') {
             fields[pos] = activePlayer
             e.target.classList.add(`board__item--filled--${activePlayer}`);
+            activePlayer = activePlayer === 'X' ? 'O' : 'X';
             panel.innerHTML = `teraz gra ${activePlayer}`
             validateGame()
-            activePlayer = activePlayer === 'X' ? 'O' : 'X';
         }
     })
 
